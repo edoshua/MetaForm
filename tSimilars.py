@@ -37,21 +37,25 @@ text_tokens = word_tokenize(i)
 tokens_without_sw = [word for word in text_tokens if word not in STOPWORDS]
 
 bigram = Phrases([tokens_without_sw], min_count=1, threshold=2, delimiter='_')
-trigram = Phrases(bigram[[tokens_without_sw]], min_count=1, threshold=2, delimiter='_')
-
-trigram_phraser = Phraser(trigram)
+bigram_phraser = Phraser(bigram)
 
 for sent in [tokens_without_sw]:
-    tokens_ = trigram_phraser[sent]
+    tokens_ = bigram_phraser[sent]
+
+trigram = Phrases([tokens_], min_count=1, threshold=2, delimiter='_')
+trigram_phraser = Phraser(trigram)
+
+for sent in [tokens_]:
+    ttokens_ = trigram_phraser[sent]
 
 corpus = []
 
-for word in tokens_:
+for word in ttokens_:
     corpus.append(word.split())
 
 model = Word2Vec(corpus,  window = 2, min_count = 2, sg = 1)
 i = 0
-for word in tokens_:
+for word in ttokens_:
     try:
         sims = model.wv.most_similar(word)
     except KeyError:
